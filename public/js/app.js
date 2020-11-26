@@ -10,7 +10,6 @@ const { username, room } = Qs.parse(location.search, {
 const socket = io();
 
 socket.on("message", (message) => {
-  console.log(message);
   outputMessage(message);
   chatBoxContainer.scrollTop = chatBoxContainer.scrollHeight;
 });
@@ -22,6 +21,10 @@ socket.on("roomUsers", ({ room, users }) => {
 
 //Join chatroom
 socket.emit("joinRoom", { username, room });
+
+socket.on("pastMessages", (pastMessagesArray) => {
+  outputPastMessage(pastMessagesArray);
+});
 //Message submit
 chatForm.addEventListener("submit", (e) => {
   e.preventDefault();
@@ -43,10 +46,21 @@ function outputMessage(message) {
     </p>`;
   chatBoxContainer.appendChild(div);
 }
+function outputPastMessage(pastMessagesArray) {
+  pastMessagesArray.forEach((message) => {
+    const div = document.createElement("div");
+    div.classList.add("message");
+    div.innerHTML = ` <p class="meta">${message.sender} <span>${moment(message.createdAt).format("h:mm a")}</span></p>
+      <p class="text">
+       ${message.text}
+      </p>`;
+    chatBoxContainer.appendChild(div);
+  });
+}
 
 //Add room name to dom
 function outputUsers(users) {
   userList.innerHTML = `
-${users.map((user) => `<li>${user.username}</li>`).join(" ")}
+${users.map((user) => `<li>${user}</li>`).join(" ")}
 `;
 }

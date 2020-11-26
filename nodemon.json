@@ -1,0 +1,7 @@
+{
+    "env": {
+        "DB_USER": "omerbkk06",
+        "DB_PASSWORD": "19901992",
+        "DB_NAME": "chat"
+    }
+}
