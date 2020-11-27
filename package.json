@@ -4,7 +4,7 @@
   "description": "Chat app ",
   "main": "app.js",
   "scripts": {
-    "start": "node srv/app.js",
+    "start": "node src/app.js",
     "dev": "nodemon src/app.js"
   },
   "author": "Ömer Kılıç",
