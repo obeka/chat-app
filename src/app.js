@@ -168,9 +168,8 @@ io.on("connection", (socket) => {
   });
 });
 
-const PORT = 3000 || process.env.PORT;
-mongoose
-  .connect(
+const PORT = process.env.PORT || 3000;
+mongoose.connect(
     `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.f6uwe.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`,
     {
       useNewUrlParser: true,
@@ -184,5 +183,5 @@ mongoose
     });
   })
   .catch((err) => {
-    console.log(err);
+    console.log("error", err);
   });

@@ -4,7 +4,7 @@
   "description": "Chat app ",
   "main": "app.js",
   "scripts": {
-    "start": "node src/app.js",
+    "start": "node srv/app.js",
     "dev": "nodemon src/app.js"
   },
   "author": "Ömer Kılıç",
@@ -14,6 +14,7 @@
     "hbs": "^4.1.1",
     "moment": "^2.29.1",
     "mongoose": "^5.10.16",
+    "node": "^15.2.1",
     "socket.io": "^3.0.3"
   }
 }
