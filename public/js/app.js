@@ -40,17 +40,22 @@ chatForm.addEventListener("submit", (e) => {
 function outputMessage(message) {
   const div = document.createElement("div");
   div.classList.add("message");
-  div.innerHTML = ` <p class="meta">${message.username} <span>${message.time}</span></p>
+  div.innerHTML = ` <p class="message-header">${message.username} <span>${message.time}</span></p>
     <p class="text">
      ${message.text}
     </p>`;
   chatBoxContainer.appendChild(div);
 }
+
+chatBoxContainer.innerHTML = `<div class="lds-ring"><div></div><div></div><div></div><div></div></div>`;
 function outputPastMessage(pastMessagesArray) {
+  chatBoxContainer.innerHTML = "";
   pastMessagesArray.forEach((message) => {
     const div = document.createElement("div");
     div.classList.add("message");
-    div.innerHTML = ` <p class="meta">${message.sender} <span>${moment(message.createdAt).format("h:mm a")}</span></p>
+    div.innerHTML = ` <p class="message-header">${message.sender} <span>${moment(
+      message.createdAt
+    ).format("h:mm a")}</span></p>
       <p class="text">
        ${message.text}
       </p>`;
@@ -59,6 +64,7 @@ function outputPastMessage(pastMessagesArray) {
 }
 
 //Add room name to dom
+userList.innerHTML = `<div class="lds-ring"><div></div><div></div><div></div><div></div></div>`;
 function outputUsers(users) {
   userList.innerHTML = `
 ${users.map((user) => `<li>${user}</li>`).join(" ")}
