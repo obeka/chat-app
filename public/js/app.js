@@ -88,7 +88,7 @@ msgInput.addEventListener("keydown", (e) => {
     typing = true;
     socket.emit("typing", { username, typing: true });
     clearTimeout(timeout);
-    timeout = setTimeout(typingTimeout, 2000);
+    timeout = setTimeout(typingTimeout, 1200);
   } else {
     typingTimeout()
     document.querySelector(".typing").innerHTML = "";  }

@@ -31,11 +31,16 @@ a {
 
 .btn {
   cursor: pointer;
-  padding: 5px 15px;
+  padding: 5px 10px;
   background: var(--light-color);
   color: #222831;
   border: 0;
   font-size: 17px;
+}
+
+#location {
+  width: 50px;
+  border-right: 1px solid grey;
 }
 
 /* Chat Page */
