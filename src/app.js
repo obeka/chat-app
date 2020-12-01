@@ -74,22 +74,22 @@ io.on("connection", (socket) => {
 
     let pastMessages;
     try {
-      pastMessages = await  Room.findOne({ roomName: room }).populate("messages");
+      pastMessages = await Room.findOne({ roomName: room }).populate(
+        "messages"
+      );
     } catch (error) {
       console.log(error);
     }
 
-    socket.emit("pastMessages",pastMessages.messages);
+    socket.emit("pastMessages", pastMessages.messages);
 
     //Welcome current user
     socket.emit("message", formatMessage("Chat Bot", "Welcome to Chat!"));
 
-    socket.on('typing', (data)=>{
-      if(data.typing==true)
-         io.emit('display', data)
-      else
-         io.emit('display', data)
-    })
+    socket.on("typing", (data) => {
+      if (data.typing == true) io.emit("display", data);
+      else io.emit("display", data);
+    });
 
     //Broadcast when a user connects
     socket.broadcast
@@ -98,14 +98,23 @@ io.on("connection", (socket) => {
         "message",
         formatMessage("Chat Bot", `${newUser.username} has joined the chat.`)
       );
-      
-    
-  
+
     io.to(newUser.room).emit("roomUsers", {
       room: newUser.room,
       users: currentRoom.users,
     });
   });
+
+  /*  //Send location
+  socket.on("sendLocation", (coords) => {
+    socket.emit(
+      "message",
+      formatMessage(
+        newUser.username,
+        `<a href="https://www.google.com/maps?q=${coords.latitude},${coords.longitude}" target="_blank">My location.</a>`
+      )
+    );
+  }); */
 
   //Listen for chatMessage
   socket.on("chatMessage", async (msg) => {
@@ -115,12 +124,20 @@ io.on("connection", (socket) => {
     } catch (error) {
       console.log(error);
     }
-
-    let message = new Message({
-      room: user.room,
-      sender: user.username,
-      text: msg,
-    });
+    let message;
+    if (msg.latitude) {
+      message = new Message({
+        room: user.room,
+        sender: user.username,
+        text: `<a href="https://www.google.com/maps?q=${msg.latitude},${msg.longitude}" target="_blank">My location.</a>`,
+      });
+    } else {
+      message = new Message({
+        room: user.room,
+        sender: user.username,
+        text: msg,
+      });
+    }
 
     try {
       await message.save();
@@ -136,17 +153,27 @@ io.on("connection", (socket) => {
       console.log(error);
     }
 
-    io.to(user.room).emit("message", {
-      username: message.sender,
-      text: message.text,
-      time: moment().format("h:mm a"),
-    });
+    if (msg.latitude) {
+      io.to(user.room).emit(
+        "message",
+        formatMessage(
+          user.username,
+          `<a href="https://www.google.com/maps?q=${msg.latitude},${msg.longitude}" target="_blank">My location.</a>`
+        )
+      );
+    } else {
+      io.to(user.room).emit("message", {
+        username: message.sender,
+        text: message.text,
+        time: moment().format("h:mm a"),
+      });
+    }
   });
 
   //When user disconnects
   socket.on("disconnect", async () => {
-   // const user = userLeave(socket.id);
-    const user = await User.findOne({socketId: socket.id})
+    // const user = userLeave(socket.id);
+    const user = await User.findOne({ socketId: socket.id });
     if (user) {
       io.to(user.room).emit(
         "message",
@@ -154,8 +181,8 @@ io.on("connection", (socket) => {
       );
       let currentRoom;
       try {
-        currentRoom = await Room.findOne({roomName: user.room })
-        currentRoom.users.pull(user.username)
+        currentRoom = await Room.findOne({ roomName: user.room });
+        currentRoom.users.pull(user.username);
         await currentRoom.save();
       } catch (error) {
         console.log(error);
@@ -168,7 +195,8 @@ io.on("connection", (socket) => {
   });
 });
 
-mongoose.connect(
+mongoose
+  .connect(
     `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.f6uwe.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`,
     {
       useNewUrlParser: true,
