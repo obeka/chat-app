@@ -2,6 +2,7 @@ const chatForm = document.querySelector("#chat-form");
 const chatBoxContainer = document.querySelector(".chat-messages");
 const userList = document.querySelector("#users");
 const msgInput = document.querySelector("#msg");
+const locationBtn = document.querySelector("#location");
 
 //Get URl params with qs
 const { username, room } = Qs.parse(location.search, {
@@ -74,6 +75,7 @@ ${users
 `;
 }
 
+//Typing effect
 let typing = false;
 let timeout = undefined;
 
@@ -99,3 +101,17 @@ socket.on("display", (data) => {
     document.querySelector(".typing").innerHTML = "";
   }
 });
+
+//Send location
+locationBtn.addEventListener("click", e => {
+  if(!navigator.geolocation) {
+    return alert("Geolocation is not supported by your browser.")
+  }
+  navigator.geolocation.getCurrentPosition(position => {
+    console.log(position);
+    socket.emit("chatMessage", {
+      latitude: position.coords.latitude,
+      longitude: position.coords.longitude
+    })
+  })
+})
