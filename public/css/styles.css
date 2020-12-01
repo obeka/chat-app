@@ -86,6 +86,13 @@ a {
   padding: 10px 0;
 }
 
+.typing {
+  position: absolute;
+  bottom: 70px;
+  font-style: italic;
+  color: white;
+}
+
 .chat-messages {
   padding: 30px;
   max-height: 400px;
@@ -112,8 +119,9 @@ a {
 }
 
 .chat-form-container {
-  padding: 20px 30px;
+  padding: 27px 30px;
   background-color: #af0404;
+  position: relative;
 }
 
 .chat-form-container form {

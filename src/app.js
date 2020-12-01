@@ -6,11 +6,9 @@ const moment = require("moment");
 const socketio = require("socket.io");
 const mongoose = require("mongoose");
 const formatMessage = require("../utils/messages");
-const { userLeave, getRoomUsers } = require("../utils/users");
 const User = require("../models/user");
 const Message = require("../models/message");
 const Room = require("../models/room");
-const users = require("../utils/users");
 
 const app = express();
 const server = http.createServer(app);
@@ -86,6 +84,13 @@ io.on("connection", (socket) => {
     //Welcome current user
     socket.emit("message", formatMessage("Chat Bot", "Welcome to Chat!"));
 
+    socket.on('typing', (data)=>{
+      if(data.typing==true)
+         io.emit('display', data)
+      else
+         io.emit('display', data)
+    })
+
     //Broadcast when a user connects
     socket.broadcast
       .to(newUser.room)
@@ -93,13 +98,9 @@ io.on("connection", (socket) => {
         "message",
         formatMessage("Chat Bot", `${newUser.username} has joined the chat.`)
       );
-
-    /*  let roomToBeRendered;
-      try {
-        roomToBeRendered = await Room.findOne({roomName: newUser.room})
-      } catch (error) {
-          console.log(error);
-      } */
+      
+    
+  
     io.to(newUser.room).emit("roomUsers", {
       room: newUser.room,
       users: currentRoom.users,
@@ -135,7 +136,6 @@ io.on("connection", (socket) => {
       console.log(error);
     }
 
-    //io.to(user.room).emit("message", formatMessage(user.username, msg));
     io.to(user.room).emit("message", {
       username: message.sender,
       text: message.text,

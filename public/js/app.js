@@ -1,6 +1,7 @@
 const chatForm = document.querySelector("#chat-form");
 const chatBoxContainer = document.querySelector(".chat-messages");
 const userList = document.querySelector("#users");
+const msgInput = document.querySelector("#msg");
 
 //Get URl params with qs
 const { username, room } = Qs.parse(location.search, {
@@ -15,7 +16,7 @@ socket.on("message", (message) => {
 });
 
 //Get room and users
-socket.on("roomUsers", ({ room, users }) => {
+socket.on("roomUsers", ({ users }) => {
   outputUsers(users);
 });
 
@@ -28,7 +29,7 @@ socket.on("pastMessages", (pastMessagesArray) => {
 //Message submit
 chatForm.addEventListener("submit", (e) => {
   e.preventDefault();
-
+  document.querySelector(".typing").innerHTML = "";
   const messageInput = e.target.elements.msg;
   //Emitting a message to the server
   socket.emit("chatMessage", messageInput.value.trim());
@@ -53,9 +54,9 @@ function outputPastMessage(pastMessagesArray) {
   pastMessagesArray.forEach((message) => {
     const div = document.createElement("div");
     div.classList.add("message");
-    div.innerHTML = ` <p class="message-header">${message.sender} <span>${moment(
-      message.createdAt
-    ).format("h:mm a")}</span></p>
+    div.innerHTML = ` <p class="message-header">${
+      message.sender
+    } <span>${moment(message.createdAt).format("h:mm a")}</span></p>
       <p class="text">
        ${message.text}
       </p>`;
@@ -67,6 +68,34 @@ function outputPastMessage(pastMessagesArray) {
 userList.innerHTML = `<div class="lds-ring"><div></div><div></div><div></div><div></div></div>`;
 function outputUsers(users) {
   userList.innerHTML = `
-${users.map((user) => `<li>${user}</li>`).join(" ")}
+${users
+  .map((user) => `<li>${user}</li>`)
+  .join(" ")}
 `;
 }
+
+let typing = false;
+let timeout = undefined;
+
+function typingTimeout() {
+  (typing = false), socket.emit("typing", { username, typing: false });
+}
+
+msgInput.addEventListener("keydown", (e) => {
+  if (e.which !== 13) {
+    typing = true;
+    socket.emit("typing", { username, typing: true });
+    clearTimeout(timeout);
+    timeout = setTimeout(typingTimeout, 2000);
+  } else {
+    typingTimeout()
+    document.querySelector(".typing").innerHTML = "";  }
+});
+
+socket.on("display", (data) => {
+  if (data.typing == true) {
+    document.querySelector(".typing").innerHTML = `${data.username} is typing...`;
+  } else {
+    document.querySelector(".typing").innerHTML = "";
+  }
+});
