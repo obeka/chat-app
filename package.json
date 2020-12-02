@@ -10,6 +10,7 @@
   "author": "Ömer Kılıç",
   "license": "MIT",
   "dependencies": {
+    "bad-words": "^3.0.4",
     "express": "^4.17.1",
     "hbs": "^4.1.1",
     "moment": "^2.29.1",

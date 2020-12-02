@@ -69,9 +69,7 @@ function outputPastMessage(pastMessagesArray) {
 userList.innerHTML = `<div class="lds-ring"><div></div><div></div><div></div><div></div></div>`;
 function outputUsers(users) {
   userList.innerHTML = `
-${users
-  .map((user) => `<li>${user}</li>`)
-  .join(" ")}
+${users.map((user) => `<li>${user}</li>`).join(" ")}
 `;
 }
 
@@ -90,28 +88,31 @@ msgInput.addEventListener("keydown", (e) => {
     clearTimeout(timeout);
     timeout = setTimeout(typingTimeout, 1200);
   } else {
-    typingTimeout()
-    document.querySelector(".typing").innerHTML = "";  }
+    typingTimeout();
+    document.querySelector(".typing").innerHTML = "";
+  }
 });
 
 socket.on("display", (data) => {
   if (data.typing == true) {
-    document.querySelector(".typing").innerHTML = `${data.username} is typing...`;
+    document.querySelector(
+      ".typing"
+    ).innerHTML = `${data.username} is typing...`;
   } else {
     document.querySelector(".typing").innerHTML = "";
   }
 });
 
 //Send location
-locationBtn.addEventListener("click", e => {
-  if(!navigator.geolocation) {
-    return alert("Geolocation is not supported by your browser.")
+locationBtn.addEventListener("click", (e) => {
+  if (!navigator.geolocation) {
+    return alert("Geolocation is not supported by your browser.");
   }
-  navigator.geolocation.getCurrentPosition(position => {
+  navigator.geolocation.getCurrentPosition((position) => {
     console.log(position);
     socket.emit("chatMessage", {
       latitude: position.coords.latitude,
-      longitude: position.coords.longitude
-    })
-  })
-})
+      longitude: position.coords.longitude,
+    });
+  });
+});
