@@ -55,9 +55,7 @@ function outputPastMessage(pastMessagesArray) {
   pastMessagesArray.forEach((message) => {
     const div = document.createElement("div");
     div.classList.add("message");
-    div.innerHTML = ` <p class="message-header">${
-      message.sender
-    } <span>${moment(message.createdAt).format("h:mm a")}</span></p>
+    div.innerHTML = ` <p class="message-header">${message._doc.sender}  <span>${moment(message._doc.createdAt).format("h:mm a")}</span></p>
       <p class="text">
        ${message.text}
       </p>`;

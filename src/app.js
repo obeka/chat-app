@@ -83,9 +83,7 @@ io.on("connection", (socket) => {
     } catch (error) {
       console.log(error);
     }
-    /* pastMessages.messages.map((message) => {
-      return { ...message, text: filter.clean(message.text) };
-    }); */
+
     socket.emit(
       "pastMessages",
       pastMessages.messages.map((message) => {
