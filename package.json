@@ -12,6 +12,7 @@
   "dependencies": {
     "bad-words": "^3.0.4",
     "express": "^4.17.1",
+    "group-by-time": "^1.0.0",
     "hbs": "^4.1.1",
     "moment": "^2.29.1",
     "mongoose": "^5.10.16",

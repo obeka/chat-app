@@ -11,7 +11,8 @@ const Message = require("../models/message");
 const Room = require("../models/room");
 const message = require("../models/message");
 const Filter = require("bad-words"),
-  filter = new Filter({placeHolder: "🤬"});
+  filter = new Filter({ placeHolder: "🤬" });
+const groupByTime = require("group-by-time");
 
 const app = express();
 const server = http.createServer(app);
@@ -76,6 +77,7 @@ io.on("connection", (socket) => {
     socket.join(newUser.room);
 
     let pastMessages;
+
     try {
       pastMessages = await Room.findOne({ roomName: room }).populate(
         "messages"
@@ -84,16 +86,20 @@ io.on("connection", (socket) => {
       console.log(error);
     }
 
-    socket.emit(
-      "pastMessages",
-      pastMessages.messages.map((message) => {
-        if (message.hasProfane) {
-          return { ...message, text: filter.clean(message.text) };
-        } else {
-          return message;
-        }
-      })
-    );
+    let filteredPastMessages = pastMessages.messages.map((message) => {
+      if (message.hasProfane) {
+        return { ...message, text: filter.clean(message.text) };
+      } else {
+        return message;
+      }
+    });
+
+    //console.log(filteredPastMessages);
+
+    let groupedByDay = groupByTime(pastMessages.messages, "createdAt", "day");
+    console.log(groupedByDay);
+
+    socket.emit("pastMessages", groupedByDay);
 
     //Welcome current user
     socket.emit("message", formatMessage("Chat Bot", "Welcome to Chat!"));
