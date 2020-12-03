@@ -9,6 +9,10 @@ const formatMessage = require("../utils/messages");
 const User = require("../models/user");
 const Message = require("../models/message");
 const Room = require("../models/room");
+const message = require("../models/message");
+const Filter = require("bad-words"),
+  filter = new Filter({ placeHolder: "🤬" });
+const groupByTime = require("group-by-time");
 
 const app = express();
 const server = http.createServer(app);
@@ -73,6 +77,7 @@ io.on("connection", (socket) => {
     socket.join(newUser.room);
 
     let pastMessages;
+
     try {
       pastMessages = await Room.findOne({ roomName: room }).populate(
         "messages"
@@ -81,7 +86,19 @@ io.on("connection", (socket) => {
       console.log(error);
     }
 
-    socket.emit("pastMessages", pastMessages.messages);
+    let filteredPastMessages = pastMessages.messages.map((message) => {
+      if (message.hasProfane) {
+        return { ...message._doc, text: filter.clean(message.text) };
+      } else {
+        return message;
+      }
+    });
+
+
+    let groupedByDay = groupByTime(filteredPastMessages, "createdAt", "day");
+    //console.log(groupedByDay);
+
+    socket.emit("pastMessages", groupedByDay);
 
     //Welcome current user
     socket.emit("message", formatMessage("Chat Bot", "Welcome to Chat!"));
@@ -105,17 +122,6 @@ io.on("connection", (socket) => {
     });
   });
 
-  /*  //Send location
-  socket.on("sendLocation", (coords) => {
-    socket.emit(
-      "message",
-      formatMessage(
-        newUser.username,
-        `<a href="https://www.google.com/maps?q=${coords.latitude},${coords.longitude}" target="_blank">My location.</a>`
-      )
-    );
-  }); */
-
   //Listen for chatMessage
   socket.on("chatMessage", async (msg) => {
     let user;
@@ -132,10 +138,12 @@ io.on("connection", (socket) => {
         text: `<a href="https://www.google.com/maps?q=${msg.latitude},${msg.longitude}" target="_blank">My location.</a>`,
       });
     } else {
+      let isProfane = filter.isProfane(msg);
       message = new Message({
         room: user.room,
         sender: user.username,
         text: msg,
+        hasProfane: isProfane,
       });
     }
 
@@ -164,7 +172,7 @@ io.on("connection", (socket) => {
     } else {
       io.to(user.room).emit("message", {
         username: message.sender,
-        text: message.text,
+        text: filter.clean(message.text),
         time: moment().format("h:mm a"),
       });
     }
