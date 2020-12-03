@@ -88,16 +88,15 @@ io.on("connection", (socket) => {
 
     let filteredPastMessages = pastMessages.messages.map((message) => {
       if (message.hasProfane) {
-        return { ...message, text: filter.clean(message.text) };
+        return { ...message._doc, text: filter.clean(message.text) };
       } else {
         return message;
       }
     });
 
-    //console.log(filteredPastMessages);
 
-    let groupedByDay = groupByTime(pastMessages.messages, "createdAt", "day");
-    console.log(groupedByDay);
+    let groupedByDay = groupByTime(filteredPastMessages, "createdAt", "day");
+    //console.log(groupedByDay);
 
     socket.emit("pastMessages", groupedByDay);
 
