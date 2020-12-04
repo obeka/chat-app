@@ -1,4 +1,3 @@
-//import {formatDate} from "./formatDate"
 const chatForm = document.querySelector("#chat-form");
 const chatBoxContainer = document.querySelector(".chat-messages");
 const userList = document.querySelector("#users");
@@ -53,12 +52,10 @@ function outputMessage(message) {
 chatBoxContainer.innerHTML = `<div class="lds-ring"><div></div><div></div><div></div><div></div></div>`;
 function outputPastMessage(pastMessagesObj) {
   chatBoxContainer.innerHTML = "";
-  
+
   //Iterate over pastMessageObj which contains messages array under date properties
   for (let messageDate in pastMessagesObj) {
-    const relativeDate = moment(Number(messageDate))
-      .calendar()
-      .split(" ")[0];
+    const relativeDate = moment(Number(messageDate)).calendar().split(" ")[0];
     const dateSection =
       relativeDate === "Today" || relativeDate === "Yesterday"
         ? relativeDate
@@ -82,15 +79,6 @@ function outputPastMessage(pastMessagesObj) {
       chatBoxContainer.appendChild(div);
     });
   }
-  /*   pastMessagesArray.forEach((message) => {
-    const div = document.createElement("div");
-    div.classList.add("message");
-    div.innerHTML = ` <p class="message-header">${message._doc.sender}  <span>${moment(message._doc.createdAt).format("h:mm a")}</span></p>
-      <p class="text">
-       ${message.text}
-      </p>`;
-    chatBoxContainer.appendChild(div);
-  }); */
 }
 
 //Add room name to dom
@@ -144,22 +132,3 @@ locationBtn.addEventListener("click", (e) => {
     });
   });
 });
-
-//Format Date
-function renderDate(date) {
-  console.log(new Date(date));
-  const today = new Date();
-  const yesterday = new Date();
-  yesterday.setDate(today.getDate() - 1);
-  if (new Date(date).toLocaleDateString() == today.toLocaleDateString()) {
-    return "Today";
-  } else if (
-    new Date(date).toLocaleDateString() == yesterday.toLocaleDateString()
-  ) {
-    return "Yesterday";
-  }
-  return new Date(date).toLocaleDateString("en-US", {
-    day: "numeric",
-    month: "long",
-  });
-}
