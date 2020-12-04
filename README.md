@@ -31,12 +31,18 @@ $ npm install
 # Run the app
 $ npm start
 ```
-Then visit [http://localhost:3000/](http://localhost:3000/) to see the page.
+Then visit [http://localhost:5000/](http://localhost:5000/) to see the page.
 
 ## Features
 
 * Enter username and choose a room
 * Enjoy real-time chatting
+
+  --- New Features Added --- (04/12/2020) 
+* Typing effect while user writes
+* Time sections (Today, Yesterday)
+* Sending Locaiton 
+* Rude word banner
 
 
 ## Screenshots
@@ -44,7 +50,8 @@ Then visit [http://localhost:3000/](http://localhost:3000/) to see the page.
 [![1.png](https://i.postimg.cc/d1jYfXPR/1.png)](https://postimg.cc/WFzCF54t)
 ### Chat Room Page
 [![2.png](https://i.postimg.cc/8cxtmpKZ/2.png)](https://postimg.cc/N276gcwX)
-
+### Chat Room Page - 2
+[![3.png](https://i.postimg.cc/3N8tYmDH/3.png)](https://postimg.cc/ZBQ8L9cf)
 
 ## Contact
 :mailbox_with_mail: You can send me email : omerbkk06@gmail.com :mailbox_with_mail:
